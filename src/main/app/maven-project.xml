@@ -39,6 +39,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
   <flow name="mavenFlow">
     <http:listener config-ref="HTTP_Listener_Configuration" path="/maven" doc:name="HTTP"/>
     <set-payload value="#['Hello Maven']" doc:name="Set Payload"/>
+        <logger message="#['The payload is' + payload]" level="INFO" doc:name="Logger"/>
   </flow>
 
   <!-- queues database result to be logged -->
@@ -47,6 +48,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <db:select config-ref="Derby_Configuration" doc:name="Database">
             <db:parameterized-query><![CDATA[SELECT * FROM flights]]></db:parameterized-query>
     </db:select>
+        <set-property propertyName="Content-Type" value="#['application/json']" doc:name="Property"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
     <jms:outbound-endpoint connector-ref="activeMQ" queue="flights" doc:name="JMS"/>
   </flow>
